@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
+import { LoginButtons } from 'meteor/okgrow:accounts-ui-react';
 import Item from './Item';
 
 import Items from '../api/Items'
@@ -10,18 +11,12 @@ class App extends Component {
     const itemOne = this.refs.itemOne.value.trim();
     const itemTwo = this.refs.itemTwo.value.trim();
     if (itemOne != '' && itemTwo != '') {
-      Items.insert({
-        itemOne: {
-          text: itemOne,
-          value: 0,
-        },
-        itemTwo: {
-          text: itemTwo,
-          value: 0,
+      Meteor.call('insertNewItem', itemOne, itemTwo, (err, response) => {
+        if(!err) {
+          this.refs.itemOne.value = '';
+          this.refs.itemTwo.value = '';
         }
       });
-      this.refs.itemOne.value = '';
-      this.refs.itemTwo.value = '';
     }
   }
 
@@ -30,6 +25,7 @@ class App extends Component {
       <div>
         <header>
           <h1>Level Up Voting</h1>
+          <LoginButtons />
         </header>
         <main>
           <form className="new-items" onSubmit={this.addItems.bind(this)}>
